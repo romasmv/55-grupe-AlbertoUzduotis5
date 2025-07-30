@@ -1,7 +1,7 @@
 import express, { json } from "express";
-const app = express()
+const app = express();
 
-app.use(express,json())
+app.use(express.json());
 
 const books = [
     {
@@ -81,7 +81,6 @@ app.post('/api/books',(req,res) => {
 
 
 app.listen(3000, ()=> console.log("Listening of port 3000..."));
-
 
 
 
