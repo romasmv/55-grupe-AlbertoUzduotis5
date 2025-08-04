@@ -1,3 +1,5 @@
+import {getBooks} from './app.db.js'
+import {getBook} from './app.db.js'
 import Joi from 'joi'
 import express, { json } from "express";
 const app = express();
@@ -57,13 +59,14 @@ app.get('/query', (req,res) => {
 //----------------------------------------
 
 //GETS
-app.get('/api/books', (req,res) => {
-    res.send(books)
+app.get('/api/books',async (req,res) => {
+    const books = await getBooks()
+    res.send(books);
 })
 
-app.get('/api/books/:id', (req,res) => {
-const book = books.find((book) => book.id === parseInt(req.params.id))
-if(!book) return res.status(404).send('Tokia knyga nerasta ;(')
+app.get('/api/books/:id',async (req,res) => {
+    const book = await getBook(req.params.id)
+    if(!book) return res.status(404).send('Tokia knyga nerasta ;(')
     res.send(book)
 });
 
@@ -149,6 +152,18 @@ app.put('/api/books',(req,res) => {
     res.send(books)
 })
 
+
+// DELETE 
+
+app.delete('/api/books/:id',(req,res) => {
+    const book = books.find((book) => book.id === parseInt(req.params.id)); 
+    if (!book) return res.status(404).send("Tokia knyga nerasta : (");
+
+    const index = books.indexOf(book)
+    books.splice(item, 1)
+
+    res.send(books)
+})
 
 app.listen(3000, ()=> console.log("Listening of port 3000..."));
 
