@@ -6,24 +6,6 @@ const app = express();
 // Middleware
 app.use(express.json());
 
-const books = [
-  {
-    id: 1,
-    author: "Kobo Abe",
-    title: "Žmogus-dėžė",
-  },
-  {
-    id: 2,
-    author: "Iain Banks",
-    title: "Tiltas",
-  },
-  {
-    id: 3,
-    author: "Italo Calvino",
-    title: "Mūsų protėviai",
-  },
-];
-
 // CRUD
 // Create - app.post()
 // Read   - app.get()
@@ -58,21 +40,11 @@ app.get("/query", (req, res) => {
 
 // ---------------------APP-----------------------
 
-// GETS
-// app.get("/api/books", (req, res) => {
-//   res.send(books);
-// });
-
 app.get("/api/books", async (req, res) => {
   const books = await getBooks();
   res.send(books);
 });
 
-// app.get("/api/books/:id", (req, res) => {
-//   const book = books.find((book) => book.id === parseInt(req.params.id));
-//   if (!book) return res.status(404).send("Tokia knyga nerasta :(");
-//   res.send(book);
-// });
 
 app.get("/api/books/:id", async (req, res) => {
   const book = await getBook(req.params.id);
@@ -81,29 +53,6 @@ app.get("/api/books/:id", async (req, res) => {
 });
 
 // POST
-// app.post("/api/books", (req, res) => {
-//   const naujaKnyga = {
-//     id: books.length + 1,
-//     author: req.body.author,
-//     title: req.body.title,
-//   };
-//   books.push(naujaKnyga);
-//   res.send(books);
-// });
-
-// app.post("/api/books", (req, res) => {
-//   if (!req.body.author || !req.body.title || req.body.author.length < 5 || req.body.title.length < 1) {
-//     res.status(400).send("Autorius turi turėti bent 5 simbolius ir pavadinimas turi turėti bent 1 simbolį.");
-//     return;
-//   }
-//   const naujaKnyga = {
-//     id: books.length + 1,
-//     author: req.body.author,
-//     title: req.body.title,
-//   };
-//   books.push(naujaKnyga);
-//   res.send(books);
-// });
 
 app.post("/api/books", (req, res) => {
   const schema = Joi.object({
@@ -159,6 +108,16 @@ app.delete("/api/books/:id", (req, res) => {
 
   res.send(books);
 });
+
+function validate(r) {
+    const schema = Joi.object({
+    author: Joi.string().min(5).required(),
+    title: Joi.string().min(1).required(),
+  });
+
+  const validation = schema.validate(r);
+  return validation;
+}
 
 app.listen(3000, () => console.log("Listening of port 3000..."));
 
